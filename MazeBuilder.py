@@ -27,10 +27,12 @@ class MazeBuilder:
 
         new_structure.append(wall)
         maze.set_whole_structure(new_structure)
+        maze.size = size
         return maze
 
     @staticmethod
-    def convert_cell_maze_to_perfect_maze(maze, size, dig_from=[1, 1]):
+    def convert_cell_maze_to_perfect_maze(maze, dig_from=[1, 1]):
+        size = maze.size
         list_of_visited_cells = list()
         list_of_visited_cells.append(dig_from)
         current_cell = 0
@@ -101,11 +103,12 @@ class MazeBuilder:
         return maze
 
     @staticmethod
-    def convert_perfect_maze_to_non_perfect(maze, size):
+    def convert_perfect_maze_to_non_perfect(maze):
         return maze
 
     @staticmethod
-    def add_distance_to_maze(maze, size):
+    def add_distance_to_maze(maze):
+        size = maze.size
         for row in range(size[0]*2+1):
             for col in range(size[1]*2+1):
                 cell = maze.structure[row][col]
@@ -114,31 +117,52 @@ class MazeBuilder:
         return maze
 
     @staticmethod
-    def create_entries_to_maze(maze, size, n_of_entries=2):
+    def create_entries_to_maze(maze, n_of_entries=2):
+        size = maze.size
         while len(maze.entries) != n_of_entries:
             chose_entry_wall = randint(0, 3)
             potential_entry = list()
             if chose_entry_wall == 0:
+                # upper wall
                 potential_entry = [0, randint(1, size[1] * 2 - 1)]
-                if maze.structure[potential_entry[0] + 1][potential_entry[1]] == '#':
+                if maze.structure[potential_entry[0] + 1][potential_entry[1]] == '#'\
+                   or maze.structure[potential_entry[0]][potential_entry[1] + 1] != '#'\
+                   or maze.structure[potential_entry[0]][potential_entry[1] - 1] != '#':
+                    # there is no wall after entry
+                    # and no entry beside new entry
                     potential_entry = 'not valid'
 
             if chose_entry_wall == 1:
+                # right wall
                 potential_entry = [randint(1, size[0] * 2 - 1), size[1] * 2]
-                if maze.structure[potential_entry[0]][potential_entry[1] - 1] == '#':
+                if maze.structure[potential_entry[0]][potential_entry[1] - 1] == '#'\
+                   or maze.structure[potential_entry[0] - 1][potential_entry[1]] != '#'\
+                   or maze.structure[potential_entry[0] + 1][potential_entry[1]] != '#':
+                    # there is no wall after entry
+                    # and no entry beside new entry
                     potential_entry = 'not valid'
 
             if chose_entry_wall == 2:
+                # lower wall
                 potential_entry = [size[0] * 2, randint(1, size[1] * 2 - 1)]
-                if maze.structure[potential_entry[0] - 1][potential_entry[1]] == '#':
+                if maze.structure[potential_entry[0] - 1][potential_entry[1]] == '#'\
+                   or maze.structure[potential_entry[0]][potential_entry[1] + 1] != '#'\
+                   or maze.structure[potential_entry[0]][potential_entry[1] - 1] != '#':
+                    # there is no wall after entry
+                    # and no entry beside new entry
                     potential_entry = 'not valid'
 
             if chose_entry_wall == 3:
                 potential_entry = [randint(1, size[1] * 2 - 1), 0]
-                if maze.structure[potential_entry[0]][potential_entry[1] + 1] == '#':
+                if maze.structure[potential_entry[0]][potential_entry[1] + 1] == '#'\
+                   or maze.structure[potential_entry[0] - 1][potential_entry[1]] != '#'\
+                   or maze.structure[potential_entry[0] - 1][potential_entry[1]] != '#':
+                    # there is no wall after entry
+                    # and no entry beside new entry
                     potential_entry = 'not valid'
 
             if potential_entry not in maze.entries and potential_entry != 'not valid':
+                # we did not choose existing entry, not beside old one, not in front of the wall
                 maze.structure[potential_entry[0]][potential_entry[1]] = ' '
                 maze.entries.append(potential_entry)
 

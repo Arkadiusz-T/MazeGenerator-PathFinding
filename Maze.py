@@ -1,9 +1,10 @@
 class Maze:
     def __init__(self):
         self.structure = list()
-        self.maze_size = 0
-        self.maze_type = 'Undefined'
+        self.size = 0
+        self.type = 'Undefined'
         self.entries = list()
+        self.solution = list()
 
     def set_whole_structure(self, new_structure):
         self.structure = new_structure
@@ -21,4 +22,15 @@ class Maze:
                 line += j
                 line += ' '
             print(line)
+
+    def print_solution(self):
+        if not self.solution:
+            print("No solution was found yet, use PathFinder to get one")
+        else:
+            for row in self.solution:
+                line = str()
+                for j in row:
+                    line += j
+                    line += ' '
+                print(line)
 
