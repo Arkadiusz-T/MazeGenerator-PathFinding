@@ -1,6 +1,6 @@
 from Maze import Maze
-from random import randint, shuffle, choice
-
+from random import randint
+from math import ceil
 
 class MazeBuilder:
     @staticmethod
@@ -40,7 +40,6 @@ class MazeBuilder:
         while maze_not_ended:
             dig_from = list_of_visited_cells[current_cell]
             direction = randint(0, 3)
-            #direction = 2
             can_dig = False
             if direction == 0:
                 # go up
@@ -100,10 +99,23 @@ class MazeBuilder:
                     maze_not_ended = False
 
                 current_cell = (current_cell - 1) % len(list_of_visited_cells)
+        maze.type = 'perfect'
         return maze
 
     @staticmethod
     def convert_perfect_maze_to_non_perfect(maze):
+        n_of_all_walls_in_the_maze = (maze.size[0]-1)*maze.size[1]*2
+        n_of_walls_destroyed_to_create_perfect_maze = 0.75 * n_of_all_walls_in_the_maze
+        n_of_walls_yet_to_destroy_to_create_non_perfect_maze = ceil(n_of_walls_destroyed_to_create_perfect_maze*0.25)
+        counter_of_destroyed_walls = int()
+        size = maze.size
+        while counter_of_destroyed_walls != n_of_walls_yet_to_destroy_to_create_non_perfect_maze:
+            x = randint(2, size[0] * 2 - 1)
+            y = randint(2, size[0] * 2 - 1)
+            if maze.structure[x][y] == '#':
+                maze.structure[x][y] = ' '
+                counter_of_destroyed_walls += 1
+        maze.type = 'non-perfect'
         return maze
 
     @staticmethod

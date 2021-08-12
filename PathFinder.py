@@ -6,12 +6,12 @@ class PathFinder:
     def random_mouse_algorithm(maze):
         # declare variables
         size = maze.size
-        solution = maze.structure           # placeholder for solution
-        current_location = maze.entries[0]  # start search from the entry
-        solution_not_ended = True           # solution it yet to find
-        end_location = maze.entries[1]      # set exit coordinates
+        solution = maze.structure.copy()            # placeholder for solution
+        current_location = maze.entries[0]          # start search from the entry
+        solution_not_ended = True                   # solution it yet to find
+        end_location = maze.entries[1]              # set exit coordinates
         direction = int()
-        can_make_a_step = True              # there is no wall in front of the entry
+        can_make_a_step = True                      # there is no wall in front of the entry
 
         # find first direction to go into the maze
         if current_location[0] == 0:
@@ -79,8 +79,66 @@ class PathFinder:
         maze.solution = solution
 
     @staticmethod
-    def wall_follower(self):
-        pass
+    def wall_follower(maze):
+        solution = maze.structure.copy()
+        size = maze.size
+        current_location = maze.entries[0]
+        end_location = maze.entries[1]
+        direction = int()
+        # find first direction to go into the maze
+        if current_location[0] == 0:
+            direction = 2
+
+        elif current_location[1] == 0:
+            direction = 1
+
+        elif current_location[0] == size[0] * 2:
+            direction = 0
+
+        elif current_location[1] == size[1] * 2:
+            direction = 3
+
+        solution[current_location[0]][current_location[1]] = '.'
+        while current_location != end_location:
+            if direction == 0:
+                # go up
+                # and should have wall on the left side
+                potential_next_location = [current_location[0] - 1, current_location[1]]
+                potential_wall_on_the_left = [current_location[0], current_location[1] - 1]
+
+            elif direction == 1:
+                # go right
+                potential_next_location = [current_location[0], current_location[1] + 1]
+                potential_wall_on_the_left = [current_location[0] - 1, current_location[1]]
+
+            elif direction == 2:
+                # go down
+                potential_next_location = [current_location[0] + 1, current_location[1]]
+                potential_wall_on_the_left = [current_location[0], current_location[1] + 1]
+
+            elif direction == 3:
+                # go left
+                potential_next_location = [current_location[0], current_location[1] - 1]
+                potential_wall_on_the_left = [current_location[0] + 1, current_location[1]]
+
+            if solution[potential_wall_on_the_left[0]][potential_wall_on_the_left[1]] == '#':
+                # check if wall on the left side
+                if solution[potential_next_location[0]][potential_next_location[1]] == '#':
+                    direction = (direction + 1) % 4
+
+                else:
+                    # go forward
+                    solution[current_location[0]][current_location[1]] = '.'
+                    current_location = potential_next_location
+
+            else:
+                # no wall so go left
+                solution[current_location[0]][current_location[1]] = '.'
+                current_location = potential_wall_on_the_left
+                direction = (direction - 1) % 4
+
+        solution[current_location[0]][current_location[1]] = '.'
+        maze.solution = solution
 
     @staticmethod
     def tremaux_algorithm():
